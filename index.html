@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+  <link rel="stylesheet" href="style.css">
+  
+  <title>Расписание</title>
+</head>
+<body>
+  <nav class="navbar navbar-default">
+    <div class="container">
+      <div class="navbar-header">
+        <a class="navbar-brand brand_desktope" href="#">
+          ОГБУЗ "Иркутская Городская Поликлиника № 4"
+        </a>
+        <a class="navbar-brand brand_mobile" href="#">
+            ОГБУЗ "ИГП№ 4"
+          </a>
+        
+      </div>
+      <p class="navbar-text navbar-right mobile-hidden" id="currentDate"> </p>
+    </div>
+  </nav>
+  <div class="container">
+    <h4 class="text-center">Расписание работы специалистов</h4>
+    <h5 class="text-center">
+      <span class="text-success cpointer" id="weekCurrent" data-tbody="tbodyCurrent">&#10004 Текущая неделя</span> |
+      <span class="text-primary cpointer" id="weekNext" data-tbody="tbodyNext">Следующая неделя</span>
+    </h5>
+    <table class="table table-responsive table-bordered table-sm">
+      <thead>
+        <tr>
+          <th>Каб.</th>
+          <th>ФИО</th>
+          <th>Должность</th>
+          <th>ПН</th>
+          <th>ВТ</th>
+          <th>СР</th>
+          <th>ЧТ</th>
+          <th>ПТ</th>
+          <th>СБ</th>
+          <th class="mobile-hidden">Примечание</th>
+        </tr>
+      </thead>
+    <tbody id="tbodyCurrent">
+    </tbody>
+    <tbody id="tbodyNext">
+    </tbody>
+    </table>
+  </div>
+  
+<script src = "https://cdn.rawgit.com/Marak/faker.js/master/examples/browser/js/faker.js" type = "text/javascript"></script>
+<script>
+  function random(min, max) {
+    let rand = min + Math.random() * (max + 1 - min);
+    return Math.floor(rand);
+  };
+  function tabChecker(){
+    var codeActive = "&#10004 ";
+    if (this.classList.contains('text-primary')) {
+      this.classList.remove('text-primary');
+      this.classList.add('text-success');
+      var text = this.innerHTML;
+      this.innerHTML = codeActive + text;
+      document.getElementById(this.dataset.tbody).style.display = "table-row-group";
+      var secondID = "weekCurrentweekNext".replace(this.id,'');
+      var secondTab = document.getElementById(secondID);
+      secondTab.classList.remove('text-success');
+      secondTab.classList.add('text-primary');
+      text = secondTab.innerHTML.slice(2);
+      secondTab.innerHTML = text;
+      document.getElementById(secondTab.dataset.tbody).style.display = "none";
+    }
+  };
+  var currentDate = document.getElementById('currentDate');
+  function setNowTime() {
+    var options = {
+    month: 'long',
+    day: 'numeric',
+    weekday: 'long',
+    timezone: 'UTC',
+    hour: 'numeric',
+    minute: 'numeric',
+    };
+    currentDate.innerHTML =  new Date().toLocaleString("ru", options)
+  };
+1  
+  setInterval(setNowTime, 1000);
+  faker.locale = "ru";
+  var tbodyCurrent = document.getElementById("tbodyCurrent");
+  var tbodyNext = document.getElementById("tbodyNext");
+  tbodyNext.style.display = "none";
+  var state = ["По записи", "В порядке живой очереди"];
+  var timeList = ["08:00-17:00","09:00-12:00", "13:00-17:00","15:00-19:00","10:00-14:00","14:00-18:00","13:00-16:00", ""];
+  var countDoct = 27;
+  for (let index = 0; index < countDoct; index++) {
+    let tr = document.createElement('tr');
+    tbodyCurrent.append(tr);
+    var docData = [random(100,430), 
+                  faker.name.findName() + " " + faker.name.lastName(), 
+                  faker.name.jobType(), 
+                  timeList[random(0,timeList.length-1)],
+                  timeList[random(0,timeList.length-1)],
+                  timeList[random(0,timeList.length-1)],
+                  timeList[random(0,timeList.length-1)],
+                  timeList[random(0,timeList.length-1)],
+                  timeList[random(0,timeList.length-1)],
+                  state[random(0,state.length-1)]
+                  ];
+    for (var i = 0; i < docData.length; i++) {
+      let td = document.createElement('td');
+      if (i == (docData.length - 1)) td.classList.add('mobile-hidden');
+      td.innerHTML = docData[i];
+      tr.append(td);
+    };
+  };
+  for (let index = 0; index < countDoct; index++) {
+    let tr = document.createElement('tr');
+    tbodyNext.append(tr);
+    var docData = [random(100,430), 
+                  faker.name.findName() + " " + faker.name.lastName(), 
+                  faker.name.jobType(), 
+                  timeList[random(0,timeList.length-1)],
+                  timeList[random(0,timeList.length-1)],
+                  timeList[random(0,timeList.length-1)],
+                  timeList[random(0,timeList.length-1)],
+                  timeList[random(0,timeList.length-1)],
+                  timeList[random(0,timeList.length-1)],
+                  state[random(0,state.length-1)]
+                  ];
+    for (var i = 0; i < docData.length; i++) {
+      let td = document.createElement('td');
+      if (i == (docData.length - 1)) td.classList.add('mobile-hidden');
+      td.innerHTML = docData[i];
+      tr.append(td);
+    };
+  }
+  var weekCurrentTab = document.getElementById('weekCurrent');
+  var weekNextTab = document.getElementById('weekNext');
+  weekNextTab.addEventListener('click', tabChecker);
+  weekCurrentTab.addEventListener('click', tabChecker);
+</script>
+</body>
+</html>
